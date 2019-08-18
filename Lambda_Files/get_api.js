@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const mongoClient = require('mongodb').MongoClient;
-const mongoURI = 'mongodb+srv://<username>:<password>@cluster0-xnifl.mongodb.net/test?retryWrites=true&w=majority';
+const mongoURI = '';
 mongoose.Promise = global.Promise;
 let isConnected;
 
 function connectToDatabase(){
-    if (isConnected){
-        console.log('Using Existing Connection');
-        return Promise.resolve();
-    }
+    // if (isConnected){
+    //     console.log('Using Existing Connection');
+    //     return Promise.resolve();
+    // }
     
     return mongoClient.connect(mongoURI,{
         useNewUrlParser : true,
@@ -22,22 +22,23 @@ function connectToDatabase(){
     })
 }
 
-module.exports.handler = (event,context,callback) => {
+module.exports.handler = (event,context,callback) =>{
     context.callbackWaitsForEmptyEventLoop = false;
-    var jsonContents = JSON.parse(JSON.stringify(event));
     
     connectToDatabase().then(client=>{
-        var db = client.db('codeiodb')
-        db.collection('mapping').insertOne(jsonContents,(err,result) => {
+        var db = client.db(dbname)
+        db.collection(collectionname).find(event).toArray((err, result) => {
             if(err){
                 throw err
             }
-            else{
-                console.log(result)
-            context.succeed("Success")
-            }
-        })
+            if(result.length === 0) context.succeed("No Results Found")
+            context.succeed(result)
+    })
     }).catch(err=>{
         console.log(err)
+        return{
+            body: JSON.stringify(err),
+            statuscode: 404
+          }
 })
 }

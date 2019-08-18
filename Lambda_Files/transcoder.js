@@ -24,7 +24,7 @@ transcoder.createJob({
      Output: {
       Key: getOutputName(fileName),
       ThumbnailPattern: '',
-      PresetId: '1351620000001-300040',
+      PresetId: '1351620000001-200050',
       Rotate: 'auto'
      }
     }, function(err, data){
@@ -37,18 +37,18 @@ transcoder.createJob({
      callback(err, data);
     });
     s3.putObject({
-                    Bucket:event.Records[0].s3.bucket.name ,
+                    Bucket:	"outputbucketname" ,
                     Key: getOutputName(fileName)
                 })
 };
-//This is just a test where a video is transcoded to an audio file
+//This is just a test where some is being transcoded to .ts format
 function getOutputName(srcKey){
- let baseName = srcKey.replace('videos/','');
- let withOutExtension = removeExtension(baseName);
- return 'audios/' + withOutExtension + '.mp3';
+ let withOutExtension = removeExtension(srcKey);
+ return withOutExtension + '.ts';
 }
 function removeExtension(srcKey){
     let lastDotPosition = srcKey.lastIndexOf(".");
     if (lastDotPosition === -1) return srcKey;
     else return srcKey.substr(0, lastDotPosition);
 }
+

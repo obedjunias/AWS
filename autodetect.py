@@ -14,7 +14,7 @@ class MyHandler(FileSystemEventHandler):
         print(f'event type: {event.event_type}  path : {event.src_path} ')
         s3 = boto3.client('s3')
         filename = event.src_path
-        bucket_name = 'bucket_name'
+        bucket_name = ''
         key = Path(event.src_path).name
 
         s3.upload_file(filename, bucket_name, key)
